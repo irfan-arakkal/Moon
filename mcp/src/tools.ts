@@ -57,6 +57,29 @@ export function buildTools(api: MoonApi): ToolDef[] {
       },
     },
     {
+      name: 'create_client',
+      description: 'Create a client (the person or firm whose activity is analysed). Only when list_clients has no suitable client.',
+      schema: z.object({ name: z.string() }),
+      run: async (a) => {
+        const c = await api.createClient({ name: a.name }, 'create_client');
+        return { id: c.id, name: c.name };
+      },
+    },
+    {
+      name: 'report_screenpipe_status',
+      description:
+        'Report to the Moon UI the result of a Screenpipe health-check you REALLY just made through the Screenpipe MCP: connected only if it answered with recent capture, with lastSeenAt = the last frame/capture time it returned. Never report connected without that call.',
+      schema: z.object({
+        clientId: z.string(),
+        status: z.enum(['connected', 'disconnected']),
+        lastSeenAt: z.string().nullable().optional().describe('ISO 8601 time of the last capture returned by health-check'),
+      }),
+      run: async ({ clientId, ...body }) => {
+        const c = await api.setScreenpipeStatus(clientId, body, 'report_screenpipe_status');
+        return { id: c.id, screenpipeStatus: c.screenpipeStatus, screenpipeLastSeenAt: c.screenpipeLastSeenAt };
+      },
+    },
+    {
       name: 'create_workflow',
       description:
         'Create an empty workflow for a client. sourceMode must be honest: screenpipe_live ONLY if you really retrieved the observations from Screenpipe (MCP A) in this session; screenpipe_recorded for a frozen recorded session; manual otherwise. Returns the workflow id to use with the other tools.',

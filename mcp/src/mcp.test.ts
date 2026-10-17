@@ -110,3 +110,14 @@ test('ownership: a workflow cannot be mutated through another client', async () 
   assert.equal(res.isError, true);
   assert.match(res.text, /n’appartient pas/);
 });
+
+test('create_client and report_screenpipe_status update the client shown in the sidebar', async () => {
+  const client = await connect();
+  const c = (await call(client, 'create_client', { name: 'Cabinet Martin' })).json;
+  const seen = '2026-10-17T21:00:00Z';
+  const res = (await call(client, 'report_screenpipe_status', { clientId: c.id, status: 'connected', lastSeenAt: seen })).json;
+  assert.equal(res.screenpipeStatus, 'connected');
+  const row = ((await rest('/clients')) as any[]).find((x) => x.id === c.id);
+  assert.equal(row.screenpipeLastSeenAt, seen);
+  assert.equal((await call(client, 'report_screenpipe_status', { clientId: 'nope', status: 'connected' })).isError, true);
+});

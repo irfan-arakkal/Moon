@@ -39,6 +39,9 @@ export class MoonApi {
   getWorkflow = (id: string) => this.call<Workflow>('GET', `/workflows/${encodeURIComponent(id)}`);
   validate = (id: string) => this.call<ValidationResult>('GET', `/workflows/${encodeURIComponent(id)}/validate`);
 
+  createClient = (body: unknown, tool: string) => this.call<ClientSummary>('POST', '/clients', { body, tool });
+  setScreenpipeStatus = (client: string, body: unknown, tool: string) =>
+    this.call<ClientSummary>('POST', `/clients/${encodeURIComponent(client)}/screenpipe-status`, { body, tool });
   createWorkflow = (body: unknown, tool: string) => this.call<Workflow>('POST', '/workflows', { body, tool });
   addNode = (wf: string, body: unknown, tool: string) => this.call<WorkflowNode>('POST', `/workflows/${encodeURIComponent(wf)}/nodes`, { body, tool });
   updateNode = (wf: string, node: string, body: unknown, tool: string) =>
