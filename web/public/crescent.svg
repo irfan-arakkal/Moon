@@ -1,4 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
-<mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200"><rect width="200" height="200" fill="#fff"/><circle cx="128" cy="78" r="78" fill="#000"/></mask>
-<circle cx="100" cy="100" r="86" fill="#d6b26a" mask="url(#m)"/>
-</svg>

@@ -11,9 +11,6 @@ interface Props {
   onSelectWorkflow: (id: string) => void;
 }
 
-// Workflow status shown as a moon phase (styles.css .wf-dot); the label keeps it explicit.
-const PHASE_LABEL: Record<string, string> = { draft: 'Brouillon', analyzing: 'Analyse en cours', ready: 'Résultat prêt', error: 'Erreur' };
-
 export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow }: Props) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState<Record<string, boolean>>({});
@@ -60,7 +57,7 @@ export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow }
                   {c.workflows.map((w) => (
                     <li key={w.id}>
                       <button className={`wf ${w.id === selectedWorkflowId ? 'selected' : ''}`} onClick={() => onSelectWorkflow(w.id)}>
-                        <span className={`wf-dot ${w.status}`} title={PHASE_LABEL[w.status]} />
+                        <span className={`wf-dot ${w.status}`} />
                         <span className="grow">{w.name}</span>
                         {w.isTestData && <span className="badge badge-test tiny">test</span>}
                       </button>
