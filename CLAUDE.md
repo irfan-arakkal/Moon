@@ -331,13 +331,13 @@ fois par le front et par le serveur MCP B :
 
 ### Tâches de Hugo (Screenpipe, MCP, analyse, démo)
 
-- [ ] H1. Tests Screenpipe : `/health`, recherche réelle, puis MCP A lu par Claude
+- [x] H1. Tests Screenpipe : `/health`, recherche réelle, puis MCP A lu par Claude
       Code. Si ça échoue, diagnostiquer avant tout le reste.
 - [ ] H2. **Enregistrer le scénario comptable** (3 à 5 min, données fictives, voir §10).
-- [ ] H3. Test d'un MCP distant minimal (`hello`) sur le service Railway d'Irfan.
-- [ ] H4. Serveur MCP B : `create_workflow`, `get_workflow`, `add_node`,
+- [x] H3. Test d'un MCP distant minimal (`hello`) sur le service Railway d'Irfan.
+- [x] H4. Serveur MCP B : `create_workflow`, `get_workflow`, `add_node`,
       `connect_nodes`, avec clé d'accès, validation des arguments et journal
-      d'activité.
+      d'activité. *(codé dans `mcp/` : 9 outils, testé en intégration par un vrai client MCP HTTP contre l'API ; pas encore branché sur Claude Code/Desktop ni déployé)*
 - [ ] H5. **Boucle P0 de bout en bout** : Claude lit Screenpipe, analyse, crée le
       workflow via MCP B, le graphe s'affiche.
 - [ ] H6. Modification en langage naturel via MCP B (`update_node`, `remove_node`).
