@@ -230,6 +230,8 @@ ul.plain { margin: 0; padding-left: 18px; color: #bdbdc4; }
 .chat-steps li { display: flex; align-items: center; gap: 7px; font-size: 11.5px; }
 .chat-steps .log-dot { margin-top: 0; }
 .log-dot.success { background: var(--green); }
+.chat-sources { display: flex; flex-direction: column; gap: 3px; margin-top: 2px; font-size: 11.5px; }
+.chat-sources a { color: #e5e5e5; text-decoration: underline; text-decoration-color: rgba(255,255,255,.3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chat-busy { animation: pulse 1.4s ease-in-out infinite; }
 .composer { flex: none; padding: 10px 12px 12px; border-top: 1px solid var(--border); }
 .composer-note { margin: 0 2px 8px; }

@@ -2,9 +2,9 @@
 // when the server has no Anthropic key: never a simulated conversation.
 
 import { useEffect, useRef, useState } from 'react';
-import { api, askAssistant, type AssistantStatus, type AssistantStep, type ChatTurn } from '../api.ts';
+import { api, askAssistant, type AssistantSource, type AssistantStatus, type AssistantStep, type ChatTurn } from '../api.ts';
 
-type Msg = ChatTurn & { steps?: AssistantStep[]; error?: boolean };
+type Msg = ChatTurn & { steps?: AssistantStep[]; sources?: AssistantSource[]; error?: boolean };
 
 const CODE_KEY = 'moon.assistantCode';
 const readCode = () => {
@@ -40,12 +40,12 @@ export function useAssistant(workflowId: string) {
     setMessages((m) => [...m, { role: 'user', content: text }]);
     setBusy(true);
     try {
-      const { reply, steps } = await askAssistant(
+      const { reply, steps, sources } = await askAssistant(
         workflowId,
         history.map(({ role, content }) => ({ role, content })),
         code,
       );
-      setMessages((m) => [...m, { role: 'assistant', content: reply, steps }]);
+      setMessages((m) => [...m, { role: 'assistant', content: reply, steps, sources }]);
     } catch (err) {
       const e = err as Error & { status?: number; steps?: AssistantStep[] };
       if (e.status === 401) {
@@ -91,6 +91,16 @@ export function ChatThread({ messages, busy }: { messages: Msg[]; busy: boolean 
             {m.content.split(/\n{2,}/).map((p, j) => (
               <p key={j}>{p}</p>
             ))}
+            {m.sources && m.sources.length > 0 && (
+              <div className="chat-sources">
+                <span className="muted tiny">Sources</span>
+                {m.sources.map((s) => (
+                  <a key={s.url} href={s.url} target="_blank" rel="noreferrer noopener">
+                    {s.title || new URL(s.url).hostname}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         ),
       )}
@@ -135,7 +145,7 @@ export function ChatInput({ workflowName, a }: { workflowName: string; a: Return
         <div className="composer-box">
           <textarea
             rows={2}
-            placeholder="Demandez à Claude de modifier ce workflow…"
+            placeholder="Demandez n’importe quoi à Claude, ou de modifier ce workflow…"
             value={text}
             disabled={!status?.enabled}
             onChange={(e) => setText(e.target.value)}
@@ -147,7 +157,7 @@ export function ChatInput({ workflowName, a }: { workflowName: string; a: Return
             }}
           />
           <div className="composer-bar">
-            <span className="ctx-chip" title="Workflow envoyé comme contexte">@ {workflowName}</span>
+            <span className="ctx-chip" title="Workflow que Claude peut lire et modifier">@ {workflowName}</span>
             <span className="grow" />
             <span className="muted tiny">{status?.model.includes('sonnet') ? 'Sonnet' : status?.model ?? ''}</span>
             <button className="send" onClick={submit} disabled={!canSend} aria-label="Envoyer">↑</button>
