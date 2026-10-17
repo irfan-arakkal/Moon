@@ -29,20 +29,24 @@ export interface AssistantStep {
   ok: boolean;
   summary: string;
 }
+export interface AssistantSource {
+  url: string;
+  title: string | null;
+}
 export interface ChatTurn {
   role: 'user' | 'assistant';
   content: string;
 }
 
-export async function askAssistant(workflowId: string, messages: ChatTurn[], code: string | null): Promise<{ reply: string; steps: AssistantStep[] }> {
+export async function askAssistant(workflowId: string, messages: ChatTurn[], code: string | null): Promise<{ reply: string; steps: AssistantStep[]; sources: AssistantSource[] }> {
   const res = await fetch('/api/assistant', {
     method: 'POST',
     headers: { 'content-type': 'application/json', ...(code ? { 'x-assistant-code': code } : {}) },
     body: JSON.stringify({ workflowId, messages }),
   });
-  const body = (await res.json().catch(() => ({}))) as { reply?: string; steps?: AssistantStep[]; error?: string };
+  const body = (await res.json().catch(() => ({}))) as { reply?: string; steps?: AssistantStep[]; sources?: AssistantSource[]; error?: string };
   if (!res.ok) throw Object.assign(new Error(body.error ?? `HTTP ${res.status}`), { status: res.status, steps: body.steps ?? [] });
-  return { reply: body.reply ?? '', steps: body.steps ?? [] };
+  return { reply: body.reply ?? '', steps: body.steps ?? [], sources: body.sources ?? [] };
 }
 
 export interface Polled<T> {

@@ -20,7 +20,7 @@ Production (ce que fait Railway) : `npm run build` puis `npm start` (API + inter
 | `DATABASE_PATH` | Fichier SQLite. Sur Railway : monter un volume sur `/data` et mettre `/data/moon.db`, sinon la base est perdue à chaque déploiement. |
 | `SEED_TEST_DATA` | `false` pour ne pas insérer le workflow de test dans une base vide. |
 | `PORT` | Fourni par Railway. |
-| `ANTHROPIC_API_KEY` | Facultatif. Active le panneau « Claude » (Sonnet 5.5) qui modifie le workflow avec les mêmes outils que MCP B. Sans clé : zone de saisie désactivée, avec la raison. |
+| `ANTHROPIC_API_KEY` | Facultatif. Active le panneau « Claude » (Sonnet 5.5) : questions générales, recherche web avec sources, et modification du workflow avec les mêmes outils que MCP B. Sans clé : zone de saisie désactivée, avec la raison. |
 | `ASSISTANT_ACCESS_CODE` | Obligatoire en production si l’assistant est activé : code demandé une fois dans le panneau. |
 
 ## Déployer sur Railway (I4)

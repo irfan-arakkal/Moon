@@ -23,7 +23,7 @@ export function ClaudePanel({ workflow, node, onCloseNode, events, eventsError, 
     <aside className="claude">
       <header className="claude-head">
         <span className="strong">Claude</span>
-        <span className="muted small">· Provenance des étapes</span>
+        <span className="muted small">· Assistant, recherche web et provenance</span>
         <span className="grow" />
         <button className="icon-btn" onClick={onCollapse} title="Masquer le panneau" aria-label="Masquer le panneau">
           »

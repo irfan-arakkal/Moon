@@ -37,7 +37,22 @@ before(async () => {
     if (seen.length === 1) {
       res.json(message([{ type: 'tool_use', id: 'tu_1', name: 'add_node', input: { workflowId: wfId, id: 'n9', type: 'action', title: 'Archiver la facture', origin: 'inferred' } }], 'tool_use'));
     } else {
-      res.json(message([{ type: 'text', text: 'Étape « Archiver la facture » ajoutée.' }], 'end_turn'));
+      // Turn 2: a server-side web search, then a cited answer (shape of web_search_20260209 results).
+      res.json(
+        message(
+          [
+            { type: 'server_tool_use', id: 'srv_1', name: 'web_search', input: { query: 'délai légal conservation factures' } },
+            { type: 'web_search_tool_result', tool_use_id: 'srv_1', content: [{ type: 'web_search_result', url: 'https://example.org/factures', title: 'Conservation des factures', encrypted_content: 'x', page_age: null }] },
+            { type: 'text', text: 'Étape « Archiver la facture » ajoutée. ' },
+            {
+              type: 'text',
+              text: 'Les factures se conservent 10 ans.',
+              citations: [{ type: 'web_search_result_location', url: 'https://example.org/factures', title: 'Conservation des factures', cited_text: '10 ans', encrypted_index: 'e' }],
+            },
+          ],
+          'end_turn',
+        ),
+      );
     }
   });
   fakeServer = await listen(fake);
@@ -79,7 +94,11 @@ test('runs the tool loop through the REST API and logs the activity', async () =
   const res = await ask('sesame');
   assert.equal(res.status, 200);
   const body = await res.json();
-  assert.deepEqual(body.steps, [{ tool: 'add_node', ok: true, summary: 'succès' }]);
+  assert.deepEqual(body.steps, [
+    { tool: 'add_node', ok: true, summary: 'succès' },
+    { tool: 'web_search', ok: true, summary: 'délai légal conservation factures' },
+  ]);
+  assert.deepEqual(body.sources, [{ url: 'https://example.org/factures', title: 'Conservation des factures' }]);
   assert.match(body.reply, /Archiver la facture/);
 
   const wf = await (await fetch(`${base}/workflows/${wfId}`)).json();
@@ -93,6 +112,7 @@ test('runs the tool loop through the REST API and logs the activity', async () =
   assert.equal(first.fallbacks, 'default');
   const names = first.tools.map((t: any) => t.name);
   assert.ok(names.includes('add_node') && !names.includes('report_screenpipe_status'));
+  assert.ok(first.tools.some((t: any) => t.type === 'web_search_20260209'));
   // Second turn carries the tool result back
   assert.ok(JSON.stringify(seen[1].messages).includes('tool_result'));
 });

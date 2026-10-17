@@ -1,4 +1,5 @@
-// In-app Claude assistant (right panel composer). Real calls only: Claude edits the workflow
+// In-app Claude assistant (right panel composer). Real calls only. Claude answers any question,
+// can search the web (Anthropic's server-side web search, with sources), and edits the workflow
 // through the same tools as MCP B (mcp/src/tools.ts), which go through the REST API, so every
 // change is validated and recorded in the activity feed. It cannot read Screenpipe from here.
 // Env: ANTHROPIC_API_KEY (required to enable it), ASSISTANT_ACCESS_CODE (required in production).
@@ -15,9 +16,10 @@ const MODEL = 'claude-sonnet-5-5';
 const ALLOWED = new Set(['get_workflow', 'add_node', 'update_node', 'remove_node', 'connect_nodes', 'validate_workflow', 'set_workflow_status']);
 const MAX_TURNS = 20;
 
-const SYSTEM = `Tu es Claude, intégré à Moon, une application qui transforme l'activité observée d'un client (capturée par Screenpipe) en workflow à automatiser.
-Tu réponds en français, de façon brève et concrète.
-Tu peux lire et modifier le workflow courant uniquement avec les outils fournis ; chaque appel est visible par l'utilisateur.
+const SYSTEM = `Tu es Claude, l'assistant intégré à Moon, une application qui transforme l'activité observée d'un client (capturée par Screenpipe) en workflow à automatiser.
+Tu réponds en français, de façon claire et concise, à toute question de l'utilisateur, liée ou non au workflow.
+Pour une information récente ou incertaine, utilise la recherche web et appuie ta réponse sur les sources trouvées.
+Tu peux aussi lire et modifier le workflow courant avec les outils fournis ; chaque appel est visible par l'utilisateur.
 Règles d'honnêteté :
 - Tu n'as PAS accès à Screenpipe ici. Ne prétends jamais avoir lu des captures dans cette conversation.
 - Une étape « observée » doit s'appuyer sur des observations déjà présentes ; n'invente jamais d'observation. Toute étape que tu ajoutes ou déduis est « inferred ».
@@ -27,6 +29,9 @@ Règles d'honnêteté :
 
 type ChatTurn = { role: 'user' | 'assistant'; content: string };
 type Step = { tool: string; ok: boolean; summary: string };
+type Source = { url: string; title: string | null };
+
+const WEB_SEARCH: Anthropic.Beta.BetaWebSearchTool20260209 = { type: 'web_search_20260209', name: 'web_search', max_uses: 5 };
 
 export function assistantRouter(opts: { apiBase: string; apiKey: string | undefined; isProd: boolean }) {
   const enabled = !!process.env.ANTHROPIC_API_KEY;
@@ -89,26 +94,40 @@ export function assistantRouter(opts: { apiBase: string; apiKey: string | undefi
     );
 
     try {
-      const final = await client.beta.messages.toolRunner({
+      const runner = client.beta.messages.toolRunner({
         model: MODEL,
         max_tokens: 16000,
         betas: ['server-side-fallback-2026-07-01'],
         fallbacks: 'default',
         output_config: { effort: 'medium' },
         system: `${SYSTEM}\n\nWorkflow courant : ${workflowId}`,
-        tools: runnable,
+        tools: [...runnable, WEB_SEARCH],
         messages: history,
         max_iterations: 12,
       });
-      if (final.stop_reason === 'refusal') {
-        return void res.json({ reply: 'Claude a refusé cette demande.', steps });
+      // The runner does not resume a paused server-tool turn by itself: push it back.
+      for await (const msg of runner) {
+        for (const b of msg.content) {
+          if (b.type === 'server_tool_use' && b.name === 'web_search') {
+            const query = (b.input as { query?: string } | null)?.query;
+            steps.push({ tool: 'web_search', ok: true, summary: query ?? 'recherche web' });
+          }
+        }
+        if (msg.stop_reason === 'pause_turn') runner.pushMessages({ role: 'assistant', content: msg.content });
       }
-      const reply = final.content
-        .filter((b): b is Anthropic.Beta.BetaTextBlock => b.type === 'text')
-        .map((b) => b.text)
-        .join('\n')
-        .trim();
-      res.json({ reply: reply || (steps.length ? 'Modifications effectuées.' : '(pas de réponse)'), steps });
+      const final = await runner.done();
+      if (final.stop_reason === 'refusal') {
+        return void res.json({ reply: 'Claude a refusé cette demande.', steps, sources: [] });
+      }
+      const texts = final.content.filter((b): b is Anthropic.Beta.BetaTextBlock => b.type === 'text');
+      const reply = texts.map((b) => b.text).join('').trim();
+      const sources = new Map<string, Source>();
+      for (const b of texts) {
+        for (const c of b.citations ?? []) {
+          if (c.type === 'web_search_result_location' && !sources.has(c.url)) sources.set(c.url, { url: c.url, title: c.title });
+        }
+      }
+      res.json({ reply: reply || (steps.length ? 'Modifications effectuées.' : '(pas de réponse)'), steps, sources: [...sources.values()] });
     } catch (err) {
       const status = err instanceof Anthropic.APIError ? (err.status ?? 502) : 500;
       const message =
