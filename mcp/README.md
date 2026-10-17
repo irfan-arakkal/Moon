@@ -7,7 +7,7 @@ l'appel (succès ou erreur) dans le fil d'activité.
 
 ## Outils
 
-`list_clients`, `create_workflow`, `get_workflow`, `add_node`, `update_node`, `remove_node`,
+`list_clients`, `create_client`, `report_screenpipe_status`, `create_workflow`, `get_workflow`, `add_node`, `update_node`, `remove_node`,
 `connect_nodes`, `validate_workflow`, `set_workflow_status`.
 
 Au démarrage, le serveur déclare cette liste à l'API (`PUT /api/mcp/tools`) : le bloc
