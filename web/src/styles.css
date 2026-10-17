@@ -39,13 +39,19 @@ code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--v
   overflow: hidden;
 }
 
-/* black-and-white starry sky (public/sky.webp, rotated to landscape) */
+/* blue starry sky (public/sky.webp): grain softened, darkened (more at the top, behind the header) */
 .sky {
-  position: absolute; inset: 0; pointer-events: none; z-index: 0;
-  background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.35)),
-    url('/sky.webp') center / cover no-repeat,
-    #000;
+  position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  background: #050a2a;
+}
+.sky::before {
+  content: ''; position: absolute; inset: -12px;
+  background: url('/sky.webp') center / cover no-repeat;
+  filter: blur(1.6px) saturate(1.1);
+}
+.sky::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(3, 6, 24, 0.82) 0%, rgba(3, 6, 24, 0.55) 22%, rgba(3, 6, 24, 0.55) 70%, rgba(3, 6, 24, 0.7) 100%);
 }
 .app > *:not(.sky) { position: relative; z-index: 1; }
 
@@ -96,7 +102,7 @@ ul.plain { margin: 0; padding-left: 18px; color: #c9c6ee; }
 /* ---------- sidebar ---------- */
 .sidebar {
   display: flex; flex-direction: column; gap: 14px; padding: 18px 14px;
-  background: linear-gradient(180deg, rgba(10,10,14,.62), rgba(6,6,10,.70));
+  background: linear-gradient(180deg, rgba(6,10,36,.62), rgba(4,7,28,.72));
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-right: 1px solid var(--border); min-height: 0;
 }
@@ -200,7 +206,7 @@ ul.plain { margin: 0; padding-left: 18px; color: #c9c6ee; }
 /* ---------- right panel ---------- */
 .rightbar {
   display: flex; flex-direction: column; gap: 12px; padding: 18px 14px; overflow: auto; min-height: 0;
-  background: linear-gradient(180deg, rgba(10,10,14,.62), rgba(6,6,10,.70));
+  background: linear-gradient(180deg, rgba(6,10,36,.62), rgba(4,7,28,.72));
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
   border-left: 1px solid var(--border);
 }
