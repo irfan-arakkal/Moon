@@ -307,10 +307,10 @@ fois par le front et par le serveur MCP B :
 
 ### Tâches d'Irfan (build : dépôt, API, front)
 
-- [ ] I1. Créer le dépôt, mettre CLAUDE.md à la racine, squelette TypeScript
+- [x] I1. Créer le dépôt, mettre CLAUDE.md à la racine, squelette TypeScript
       (`web/`, `mcp/`, `shared/`).
-- [ ] I2. Rédiger `shared/types.ts` d'après §8 et le faire valider par Hugo.
-- [ ] I3. Base de données (SQLite d'abord, Postgres ensuite) et API REST du contrat.
+- [ ] I2. Rédiger `shared/types.ts` d’après §8 et le faire valider par Hugo. *(rédigé — en attente de validation par Hugo)*
+- [x] I3. Base de données (SQLite d'abord, Postgres ensuite) et API REST du contrat.
 - [ ] I4. Déployer le service sur Railway (variables d'environnement, jamais de clé
       dans le dépôt) et donner l'URL à Hugo.
 - [ ] I5. Front : React Flow qui affiche un workflow lu depuis l'API (données de

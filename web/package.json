@@ -1,0 +1,31 @@
+{
+  "name": "@moon/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n api,ui \"tsx watch server/index.ts\" \"vite\"",
+    "build": "vite build",
+    "start": "NODE_ENV=production tsx server/index.ts",
+    "test": "tsx --test server/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@moon/shared": "*",
+    "@xyflow/react": "^12.10.0",
+    "express": "^5.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tsx": "^4.20.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^5.2.0",
+    "concurrently": "^9.2.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.7"
+  }
+}
