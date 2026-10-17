@@ -23,7 +23,7 @@ export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow }
   return (
     <aside className="sidebar">
       <div className="brand">
-        <div className="moon" aria-hidden />
+        <div className="logo-tile" aria-hidden><div className="moon" /></div>
         <div>
           <div className="brand-name">Moon</div>
           <div className="muted tiny">Trouver quoi automatiser</div>
