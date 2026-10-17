@@ -22,8 +22,8 @@ export function Provenance({ workflow, node, onClose }: { workflow: Workflow; no
   return (
     <section className="card provenance">
       <header className="card-head">
-        <span className="step-icon" style={{ color: icon.color, borderColor: 'var(--border-strong)', background: 'var(--tile)' }}>
-          <Icon name={icon.name} size={16} />
+        <span className="step-icon">
+          <Icon name={icon} size={16} />
         </span>
         <div className="grow">
           <div className="muted small">Provenance de l’étape</div>

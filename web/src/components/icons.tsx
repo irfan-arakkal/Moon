@@ -24,19 +24,15 @@ export function Icon({ name, size = 22 }: { name: string; size?: number }) {
   );
 }
 
-// Icon + colour for a step, from its type, app and title.
-export function stepIcon(node: WorkflowNode): { name: string; color: string } {
+// Icon for a step, from its type, app and title (monochrome theme: colour comes from CSS).
+export function stepIcon(node: WorkflowNode): string {
   const app = node.app ?? '';
   const title = node.title;
-  if (node.type === 'condition') return { name: 'branch', color: '#e8b04b' };
-  if (/gmail|mail|outlook/i.test(app)) {
-    return /relance|envo|répon|send|reply/i.test(title) && node.type !== 'trigger' ? { name: 'send', color: '#f2876b' } : { name: 'mail', color: '#f2876b' };
-  }
-  if (/pdf|acrobat|preview|aperçu/i.test(app)) return { name: 'file', color: '#e889b0' };
-  if (/excel|sheets|tableur|calc|spreadsheet/i.test(app)) {
-    return /marqu|coch|rapproch|valid/i.test(title) ? { name: 'check', color: '#4fc78b' } : { name: 'table', color: '#4fc78b' };
-  }
-  if (/banque|bank|relevé/i.test(app)) return { name: 'bank', color: '#e8b04b' };
-  if (/chrome|firefox|safari|edge|browser|navigateur/i.test(app)) return { name: 'globe', color: '#7aa7f2' };
-  return { name: 'dot', color: '#a1a1aa' };
+  if (node.type === 'condition') return 'branch';
+  if (/gmail|mail|outlook/i.test(app)) return /relance|envo|répon|send|reply/i.test(title) && node.type !== 'trigger' ? 'send' : 'mail';
+  if (/pdf|acrobat|preview|aperçu/i.test(app)) return 'file';
+  if (/excel|sheets|tableur|calc|spreadsheet/i.test(app)) return /marqu|coch|rapproch|valid/i.test(title) ? 'check' : 'table';
+  if (/banque|bank|relevé/i.test(app)) return 'bank';
+  if (/chrome|firefox|safari|edge|browser|navigateur/i.test(app)) return 'globe';
+  return 'dot';
 }
