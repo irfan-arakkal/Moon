@@ -97,8 +97,10 @@ ul.plain { margin: 0; padding-left: 18px; color: #bdbdc4; }
 /* ---------- sidebar ---------- */
 .sidebar {
   display: flex; flex-direction: column; gap: 14px; padding: 18px 14px;
-  background: var(--panel-solid);
-  border-right: 1px solid var(--border); min-height: 0;
+  /* translucent charcoal: the lunar photo shows faintly through, like the panels of the design */
+  background: linear-gradient(180deg, rgba(14,14,14,.78), rgba(14,14,14,.66));
+  backdrop-filter: blur(6px) grayscale(1); -webkit-backdrop-filter: blur(6px) grayscale(1);
+  border-right: 1px solid rgba(255,255,255,.1); min-height: 0;
 }
 .brand { display: flex; align-items: center; gap: 12px; padding: 4px 6px 8px; }
 .brand-name { font-size: 18px; font-weight: 700; letter-spacing: .02em; }
