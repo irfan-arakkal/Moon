@@ -6,3 +6,6 @@ dist/
 .env.*
 !.env.example
 .DS_Store
+
+# captured Screenpipe sessions (plan B) stay on the demo machine
+fixtures/session-*.json
