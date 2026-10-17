@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
-<defs>
-<radialGradient id="surface" cx=".3" cy=".4" r=".85"><stop offset="0" stop-color="#fffbf2"/><stop offset=".65" stop-color="#f3ead6"/><stop offset="1" stop-color="#dccfb2"/></radialGradient>
-<mask id="crescent" maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="400"><rect width="400" height="400" fill="#fff"/><circle cx="236" cy="172" r="76" fill="#000"/></mask>
-<filter id="halo" filterUnits="userSpaceOnUse" x="0" y="0" width="400" height="400"><feGaussianBlur stdDeviation="20"/></filter>
-</defs>
-<g filter="url(#halo)" opacity=".7"><circle cx="200" cy="200" r="84" fill="#c4b8ff" mask="url(#crescent)"/></g>
-<circle cx="200" cy="200" r="80" fill="url(#surface)" mask="url(#crescent)"/>
-</svg>
