@@ -18,7 +18,7 @@ import { Icon, stepIcon } from './icons.tsx';
 import { layout } from '../layout.ts';
 
 // Arrow heads match the edge stroke in styles.css.
-const EDGE_STROKE = '#4a4a50';
+const EDGE_STROKE = '#9a9a9a';
 // Condition outputs keep their stored label (true / false) but read as "oui" / "non" on screen.
 const EDGE_TEXT: Record<string, string> = { true: 'oui', false: 'non' };
 const TYPE_LABEL: Record<WorkflowNode['type'], string> = { trigger: 'déclencheur', action: 'action', condition: 'condition', end: 'fin' };
@@ -33,9 +33,9 @@ function StepCard({ data }: NodeProps<StepNode>) {
   const observed = node.origin === 'observed';
   return (
     <div className={`node2 node2-${node.type} ${observed ? 'is-observed' : 'is-inferred'} ${selected ? 'is-selected' : ''}`}>
-      <div className="node2-tile" style={{ color: icon.color }} title={observed ? 'Observée dans Screenpipe' : 'Déduite par le modèle'}>
+      <div className="node2-tile" title={observed ? 'Observée dans Screenpipe' : 'Déduite par le modèle'}>
         <Handle type="target" position={Position.Left} />
-        <Icon name={icon.name} size={24} />
+        <Icon name={icon} size={24} />
         {observed && <span className="node2-check" aria-label="observée">✓</span>}
         <Handle type="source" position={Position.Right} />
       </div>
