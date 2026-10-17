@@ -124,9 +124,9 @@ function Graph({ workflow, selectedId, onSelect }: Props) {
       proOptions={{ hideAttribution: true }}
       colorMode="dark"
     >
-      <Background gap={22} size={1} color="#2a2850" />
+      <Background gap={20} size={1} color="rgba(255,255,255,0.09)" />
       <Controls position="top-left" showInteractive={false} />
-      <MiniMap position="bottom-left" pannable zoomable bgColor="#121130" nodeColor="#7c6cff" nodeBorderRadius={4} maskColor="rgba(8,8,24,0.55)" />
+      <MiniMap position="bottom-left" pannable zoomable bgColor="#11141b" nodeColor="#7468f0" nodeBorderRadius={4} maskColor="rgba(11,13,18,0.6)" />
     </ReactFlow>
   );
 }
