@@ -1,9 +1,11 @@
 // I8 provenance (floating card), "Outils MCP disponibles", Détails and Logs (I7 activity) tabs.
 
 import type { ActivityEvent, McpToolInfo, ValidationResult, Workflow, WorkflowNode } from '@moon/shared';
-import { appStyle } from '../apps.ts';
 import { fmtDateTime, fmtTime, timeAgo } from '../api.ts';
 import { OriginBadge } from './Badges.tsx';
+import { Icon, stepIcon } from './icons.tsx';
+
+const TYPE_LABEL: Record<WorkflowNode['type'], string> = { trigger: 'déclencheur', action: 'action', condition: 'condition', end: 'fin' };
 
 export function TestDataNotice({ workflow }: { workflow: Workflow }) {
   if (!workflow.isTestData) return null;
@@ -13,15 +15,15 @@ export function TestDataNotice({ workflow }: { workflow: Workflow }) {
 // ---------- I8: provenance of one node ----------
 
 export function Provenance({ workflow, node, onClose }: { workflow: Workflow; node: WorkflowNode; onClose: () => void }) {
-  const app = appStyle(node.app);
+  const icon = stepIcon(node);
   const incoming = workflow.edges.filter((e) => e.target === node.id);
   const outgoing = workflow.edges.filter((e) => e.source === node.id);
   const title = (id: string) => workflow.nodes.find((n) => n.id === id)?.title ?? id;
   return (
     <section className="card provenance">
       <header className="card-head">
-        <span className="step-icon sm" style={{ background: `${app.color}22`, color: app.color, borderColor: `${app.color}55` }}>
-          {app.mark}
+        <span className="step-icon" style={{ color: icon.color, borderColor: 'var(--border-strong)', background: 'var(--tile)' }}>
+          <Icon name={icon.name} size={16} />
         </span>
         <div className="grow">
           <div className="muted small">Provenance de l’étape</div>
@@ -34,7 +36,7 @@ export function Provenance({ workflow, node, onClose }: { workflow: Workflow; no
       <div className="row gap">
         <OriginBadge origin={node.origin} />
         {node.app && <span className="badge badge-manual">{node.app}</span>}
-        <span className="badge badge-manual">{node.type}</span>
+        <span className="badge badge-manual">{TYPE_LABEL[node.type]}</span>
       </div>
       {node.description && <p className="desc">{node.description}</p>}
       <TestDataNotice workflow={workflow} />

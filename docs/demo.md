@@ -9,7 +9,7 @@ Ne jamais les mettre dans le dépôt, un chat de groupe ou un log.
 
 | Service | Config file | Variables | Autre |
 |---|---|---|---|
-| **app** (API + interface) | `railway.json` (racine, par défaut) | `API_KEY=K1`, `DATABASE_PATH=/data/moon.db`, `SEED_TEST_DATA=false` | Volume monté sur `/data`, Generate Domain |
+| **app** (API + interface) | `railway.json` (racine, par défaut) | `API_KEY=K1`, `DATABASE_PATH=/data/moon.db`, `SEED_TEST_DATA=false` ; facultatif : `ANTHROPIC_API_KEY`, `ASSISTANT_ACCESS_CODE` (panneau Claude) | Volume monté sur `/data`, Generate Domain |
 | **mcp** (MCP B) | `mcp/railway.json` | `MCP_ACCESS_KEY=K2`, `MOON_API_KEY=K1`, `MOON_API_URL=https://<domaine-app>/api` | Generate Domain |
 
 Vérifier : `https://<domaine-app>/api/health` → `{"ok":true}` ;

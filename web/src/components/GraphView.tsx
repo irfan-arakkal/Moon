@@ -2,11 +2,9 @@
 
 import { useEffect, useMemo } from 'react';
 import {
-  Background,
   Controls,
   Handle,
   MarkerType,
-  MiniMap,
   Position,
   ReactFlow,
   ReactFlowProvider,
@@ -16,33 +14,35 @@ import {
   useReactFlow,
 } from '@xyflow/react';
 import type { Workflow, WorkflowNode } from '@moon/shared';
-import { appStyle } from '../apps.ts';
+import { Icon, stepIcon } from './icons.tsx';
 import { layout } from '../layout.ts';
 
-// Arrow colours match the edge strokes in styles.css (plain / true / false).
-const EDGE_COLOR = { plain: '#5e5e5e', true: '#34d399', false: '#f87171' } as const;
+// Arrow heads match the edge stroke in styles.css.
+const EDGE_STROKE = '#4a4a50';
+// Condition outputs keep their stored label (true / false) but read as "oui" / "non" on screen.
+const EDGE_TEXT: Record<string, string> = { true: 'oui', false: 'non' };
+const TYPE_LABEL: Record<WorkflowNode['type'], string> = { trigger: 'déclencheur', action: 'action', condition: 'condition', end: 'fin' };
 
 type StepData = { node: WorkflowNode; selected: boolean };
 type StepNode = Node<StepData, 'step'>;
 
+// n8n-style step: square icon tile, origin mark (✓ observed / dashed tile inferred), label underneath.
 function StepCard({ data }: NodeProps<StepNode>) {
   const { node, selected } = data;
-  const app = appStyle(node.app);
+  const icon = stepIcon(node);
+  const observed = node.origin === 'observed';
   return (
-    <div className={`step step-${node.type} ${selected ? 'is-selected' : ''} origin-${node.origin}`}>
-      <Handle type="target" position={Position.Left} />
-      <div className="step-icon" style={{ background: `${app.color}22`, color: app.color, borderColor: `${app.color}55` }}>
-        {app.mark}
+    <div className={`node2 node2-${node.type} ${observed ? 'is-observed' : 'is-inferred'} ${selected ? 'is-selected' : ''}`}>
+      <div className="node2-tile" style={{ color: icon.color }} title={observed ? 'Observée dans Screenpipe' : 'Déduite par le modèle'}>
+        <Handle type="target" position={Position.Left} />
+        <Icon name={icon.name} size={24} />
+        {observed && <span className="node2-check" aria-label="observée">✓</span>}
+        <Handle type="source" position={Position.Right} />
       </div>
-      <div className="step-body">
-        <div className="step-app">{node.app ?? (node.type === 'condition' ? 'Condition' : 'Étape')}</div>
-        <div className="step-title">{node.title}</div>
-        {node.description && <div className="step-desc">{node.description}</div>}
+      <div className="node2-label">
+        <div className="node2-title">{node.title}</div>
+        <div className="node2-sub">{[node.app, TYPE_LABEL[node.type]].filter(Boolean).join(' · ')}</div>
       </div>
-      <span className={`origin-dot ${node.origin}`} title={node.origin === 'observed' ? 'Observée dans Screenpipe' : 'Inférée par le modèle'}>
-        {node.origin === 'observed' ? 'obs.' : 'inf.'}
-      </span>
-      <Handle type="source" position={Position.Right} />
     </div>
   );
 }
@@ -76,8 +76,8 @@ function Graph({ workflow, selectedId, onSelect }: Props) {
         data: { node: n, selected: n.id === selectedId },
         draggable: false,
         // Size hint for the minimap (controlled nodes never get `measured` written back).
-        initialWidth: 210,
-        initialHeight: 64,
+        initialWidth: 72,
+        initialHeight: 72,
       })),
     [workflow.nodes, positions, selectedId],
   );
@@ -90,11 +90,10 @@ function Graph({ workflow, selectedId, onSelect }: Props) {
           id: e.id,
           source: e.source,
           target: e.target,
-          label: e.label ?? undefined,
+          label: e.label ? (EDGE_TEXT[e.label.toLowerCase()] ?? e.label) : undefined,
           className: `edge-${kind}`,
-          labelBgPadding: [6, 3] as [number, number],
-          labelBgBorderRadius: 6,
-          markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: EDGE_COLOR[kind] },
+          labelShowBg: false,
+          markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: EDGE_STROKE },
         };
       }),
     [workflow.edges],
@@ -103,7 +102,7 @@ function Graph({ workflow, selectedId, onSelect }: Props) {
   // Re-centre when steps are added or removed (e.g. by MCP B), not on every poll.
   const shape = workflow.nodes.map((n) => n.id).join('|');
   useEffect(() => {
-    const t = setTimeout(() => fitView({ padding: 0.2, duration: 300 }), 60);
+    const t = setTimeout(() => fitView({ padding: 0.25, duration: 300 }), 60);
     return () => clearTimeout(t);
   }, [shape, fitView]);
 
@@ -127,9 +126,7 @@ function Graph({ workflow, selectedId, onSelect }: Props) {
       proOptions={{ hideAttribution: true }}
       colorMode="dark"
     >
-      <Background gap={20} size={1} color="rgba(255,255,255,0.09)" />
-      <Controls position="top-left" showInteractive={false} />
-      <MiniMap position="bottom-left" pannable zoomable bgColor="#1b1b1b" nodeColor="#8c8c8c" nodeBorderRadius={4} maskColor="rgba(18,18,18,0.6)" />
+      <Controls position="bottom-left" orientation="horizontal" showInteractive={false} />
     </ReactFlow>
   );
 }
