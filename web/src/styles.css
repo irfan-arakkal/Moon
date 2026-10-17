@@ -39,13 +39,21 @@ code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--v
   overflow: hidden;
 }
 
-/* nebula wallpaper (public/background.webp), darkened so panels and the graph stay readable */
+/* drawn night sky: star field (public/stars.svg), soft nebula clouds, crescent moon (public/moon.svg) */
 .sky {
-  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
   background:
-    linear-gradient(180deg, rgba(4, 6, 18, 0.55) 0%, rgba(4, 6, 18, 0.35) 45%, rgba(4, 6, 18, 0.65) 100%),
-    url('/background.webp') center / cover no-repeat,
-    #050814;
+    url('/stars.svg') center / cover no-repeat,
+    radial-gradient(38% 30% at 62% 18%, rgba(124, 108, 255, 0.20), transparent 70%),
+    radial-gradient(45% 35% at 30% 85%, rgba(70, 110, 230, 0.16), transparent 72%),
+    radial-gradient(30% 25% at 85% 70%, rgba(170, 100, 240, 0.12), transparent 70%),
+    radial-gradient(60% 45% at 10% 10%, rgba(40, 60, 160, 0.14), transparent 70%),
+    linear-gradient(180deg, #04050f 0%, #070a1d 50%, #0b0a24 100%);
+}
+.sky::after {
+  content: ''; position: absolute;
+  width: 230px; height: 230px; top: 150px; right: 400px;
+  background: url('/moon.svg') center / contain no-repeat;
 }
 .app > *:not(.sky) { position: relative; z-index: 1; }
 
@@ -148,7 +156,7 @@ ul.plain { margin: 0; padding-left: 18px; color: #c9c6ee; }
 .tabs button.active { color: #fff; border-bottom-color: var(--violet); }
 .tabs button:disabled { opacity: .4; cursor: not-allowed; }
 .count { font-size: 11px; padding: 0 6px; border-radius: 999px; background: rgba(124,108,255,.25); color: #ddd6ff; }
-.canvas { flex: 1; min-height: 0; margin: 14px 18px 18px; border-radius: 14px; border: 1px solid var(--border); background: rgba(9,9,28,.55); overflow: hidden; position: relative; }
+.canvas { flex: 1; min-height: 0; margin: 14px 18px 18px; border-radius: 14px; border: 1px solid var(--border); background: rgba(9,9,28,.28); overflow: hidden; position: relative; }
 .tab-scroll { height: 100%; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 
 .table { width: 100%; border-collapse: collapse; font-size: 13px; }
