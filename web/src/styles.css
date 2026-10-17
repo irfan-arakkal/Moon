@@ -104,8 +104,6 @@ ul.plain { margin: 0; padding-left: 18px; color: #bdbdc4; }
 }
 .brand { display: flex; align-items: center; gap: 10px; padding: 2px 6px 6px; }
 .brand-name { font-size: 15px; font-weight: 600; }
-.logo-tile { width: 26px; height: 26px; border-radius: 4px; background: #f5f5f5; border: 1px solid #f5f5f5; display: grid; place-items: center; flex: none; }
-.moon { width: 14px; height: 14px; border-radius: 50%; box-shadow: inset 4px -2px 0 0 #121212; transform: rotate(-20deg); }
 .search {
   display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px;
   border: 1px solid transparent; color: var(--muted); cursor: text;
