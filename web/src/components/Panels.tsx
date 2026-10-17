@@ -34,7 +34,7 @@ export function Provenance({ workflow, node, onClose }: { workflow: Workflow; no
         </button>
       </header>
       <div className="row gap">
-        <OriginBadge origin={node.origin} />
+        <OriginBadge node={node} />
         {node.app && <span className="badge badge-manual">{node.app}</span>}
         <span className="badge badge-manual">{TYPE_LABEL[node.type]}</span>
       </div>
@@ -150,7 +150,7 @@ export function DetailsTab({ workflow, validation, onSelect }: { workflow: Workf
               </td>
               <td>{n.app ?? '—'}</td>
               <td>
-                <OriginBadge origin={n.origin} />
+                <OriginBadge node={n} />
               </td>
               <td className="small">
                 {n.observations.length === 0

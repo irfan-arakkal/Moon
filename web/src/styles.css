@@ -184,6 +184,7 @@ ul.plain { margin: 0; padding-left: 18px; color: #bdbdc4; }
   display: grid; place-items: center; font-size: 10px; font-weight: 700;
   background: #f5f5f5; color: #121212; border: 1px solid #f5f5f5;
 }
+.node2-check.is-unproven { background: var(--red); border-color: var(--red); color: #121212; }
 .node2-label { position: absolute; top: 80px; left: 50%; transform: translateX(-50%); max-width: 180px; padding: 3px 8px; border-radius: 6px; background: rgba(18,18,18,.82); text-align: center; pointer-events: none; }
 .node2-title { font-size: 12px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .node2-sub { font-size: 10.5px; color: #a3a3a3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

@@ -1,6 +1,6 @@
 // I9: status badges. Every label below must be true for the data shown (CLAUDE.md §2, §9.5).
 
-import type { NodeOrigin, Workflow } from '@moon/shared';
+import type { Workflow, WorkflowNode } from '@moon/shared';
 
 export function SourceBadge({ workflow }: { workflow: Workflow }) {
   if (workflow.isTestData)
@@ -43,8 +43,10 @@ export function StatusBadge({ status }: { status: Workflow['status'] }) {
   return <span className={`badge ${s.cls}`}>{s.label}</span>;
 }
 
-export function OriginBadge({ origin }: { origin: NodeOrigin }) {
-  return origin === 'observed' ? (
+export function OriginBadge({ node }: { node: WorkflowNode }) {
+  if (node.origin === 'observed' && node.observations.length === 0)
+    return <span className="badge badge-error" title="Marquée observée mais aucune observation Screenpipe ne l’appuie">Observée sans preuve</span>;
+  return node.origin === 'observed' ? (
     <span className="badge badge-observed" title="Présente dans les résultats Screenpipe">Observée</span>
   ) : (
     <span className="badge badge-inferred" title="Déduite par le modèle, pas vue directement">Inférée</span>

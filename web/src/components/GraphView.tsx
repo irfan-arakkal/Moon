@@ -30,13 +30,17 @@ type StepNode = Node<StepData, 'step'>;
 function StepCard({ data }: NodeProps<StepNode>) {
   const { node, selected } = data;
   const icon = stepIcon(node);
+  // "observed" is only shown as proven when observations back it; otherwise it is flagged.
   const observed = node.origin === 'observed';
+  const proven = observed && node.observations.length > 0;
+  const title = proven ? 'Observée dans Screenpipe' : observed ? 'Marquée observée mais sans observation' : 'Déduite par le modèle';
   return (
     <div className={`node2 node2-${node.type} ${observed ? 'is-observed' : 'is-inferred'} ${selected ? 'is-selected' : ''}`}>
-      <div className="node2-tile" title={observed ? 'Observée dans Screenpipe' : 'Déduite par le modèle'}>
+      <div className="node2-tile" title={title}>
         <Handle type="target" position={Position.Left} />
         <Icon name={icon} size={24} />
-        {observed && <span className="node2-check" aria-label="observée">✓</span>}
+        {proven && <span className="node2-check" aria-label="observée">✓</span>}
+        {observed && !proven && <span className="node2-check is-unproven" aria-label={title}>!</span>}
         <Handle type="source" position={Position.Right} />
       </div>
       <div className="node2-label">
@@ -102,7 +106,7 @@ function Graph({ workflow, selectedId, onSelect }: Props) {
   // Re-centre when steps are added or removed (e.g. by MCP B), not on every poll.
   const shape = workflow.nodes.map((n) => n.id).join('|');
   useEffect(() => {
-    const t = setTimeout(() => fitView({ padding: 0.25, duration: 300 }), 60);
+    const t = setTimeout(() => fitView({ padding: 0.25, maxZoom: 1.1, duration: 300 }), 60);
     return () => clearTimeout(t);
   }, [shape, fitView]);
 
@@ -117,7 +121,7 @@ function Graph({ workflow, selectedId, onSelect }: Props) {
       edges={edges}
       nodeTypes={nodeTypes}
       fitView
-      fitViewOptions={{ padding: 0.2 }}
+      fitViewOptions={{ padding: 0.2, maxZoom: 1.1 }}
       minZoom={0.2}
       maxZoom={2}
       nodesConnectable={false}
