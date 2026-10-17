@@ -19,6 +19,9 @@ import type { Workflow, WorkflowNode } from '@moon/shared';
 import { appStyle } from '../apps.ts';
 import { layout } from '../layout.ts';
 
+// Arrow colours match the edge strokes in styles.css (plain / true / false).
+const EDGE_COLOR = { plain: '#5c6475', true: '#34d399', false: '#f87171' } as const;
+
 type StepData = { node: WorkflowNode; selected: boolean };
 type StepNode = Node<StepData, 'step'>;
 
@@ -91,7 +94,7 @@ function Graph({ workflow, selectedId, onSelect }: Props) {
           className: `edge-${kind}`,
           labelBgPadding: [6, 3] as [number, number],
           labelBgBorderRadius: 6,
-          markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16 },
+          markerEnd: { type: MarkerType.ArrowClosed, width: 16, height: 16, color: EDGE_COLOR[kind] },
         };
       }),
     [workflow.edges],
