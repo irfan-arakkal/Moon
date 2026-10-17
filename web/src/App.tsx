@@ -2,8 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { api, fmtDateTime, timeAgo, useNow, usePolling } from './api.ts';
 import { GraphView } from './components/GraphView.tsx';
 import { SourceBadge, StatusBadge } from './components/Badges.tsx';
-import { ActivityFeed, DetailsTab, LogsTab, McpTools, Provenance } from './components/Panels.tsx';
-import { Sidebar } from './components/Sidebar.tsx';
+import { DetailsTab, LogsTab, Provenance } from './components/Panels.tsx';
+import { ScreenpipeStatus, Sidebar } from './components/Sidebar.tsx';
 
 const POLL_MS = 2000;
 type Tab = 'graph' | 'details' | 'logs';
@@ -50,7 +50,7 @@ export function App() {
   return (
     <div className="app">
       <div className="sky" aria-hidden />
-      <Sidebar clients={clients.data} error={clients.error} selectedWorkflowId={workflowId} onSelectWorkflow={selectWorkflow} now={now} />
+      <Sidebar clients={clients.data} error={clients.error} selectedWorkflowId={workflowId} onSelectWorkflow={selectWorkflow} />
 
       <main className="main">
         {!workflowId && !clients.loading && <div className="empty">Aucun workflow pour l’instant.</div>}
@@ -67,6 +67,7 @@ export function App() {
                 <div className="row gap wrap">
                   <SourceBadge workflow={wf} />
                   <StatusBadge status={wf.status} />
+                  <ScreenpipeStatus client={client ?? null} now={now} />
                   {workflow.error && <span className="badge badge-error">Rafraîchissement en échec</span>}
                 </div>
               </div>
@@ -88,18 +89,17 @@ export function App() {
             <section className="canvas">
               {tab === 'graph' && <GraphView workflow={wf} selectedId={selectedNode} onSelect={setSelectedNode} />}
               {tab === 'details' && <DetailsTab workflow={wf} validation={validation.data} onSelect={(id) => { setSelectedNode(id); }} />}
-              {tab === 'logs' && <LogsTab events={activity.data} now={now} />}
+              {tab === 'logs' && <LogsTab events={activity.data} error={activity.error} tools={tools.data} toolsError={tools.error} now={now} />}
+              {node && tab !== 'logs' && (
+                <div className="node-overlay">
+                  <Provenance workflow={wf} node={node} onClose={() => setSelectedNode(null)} />
+                </div>
+              )}
             </section>
           </>
         )}
       </main>
 
-      <aside className="rightbar">
-        {wf && node && <Provenance workflow={wf} node={node} onClose={() => setSelectedNode(null)} />}
-        {wf && !node && <p className="hint muted small">Cliquez sur une étape pour voir sa provenance.</p>}
-        <ActivityFeed events={activity.data} error={activity.error} now={now} />
-        <McpTools tools={tools.data} error={tools.error} />
-      </aside>
     </div>
   );
 }

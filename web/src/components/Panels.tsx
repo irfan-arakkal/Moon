@@ -1,4 +1,4 @@
-// I7 activity feed, I8 provenance, "Outils MCP disponibles", Détails and Logs tabs.
+// I8 provenance (floating card), "Outils MCP disponibles", Détails and Logs (I7 activity) tabs.
 
 import type { ActivityEvent, McpToolInfo, ValidationResult, Workflow, WorkflowNode } from '@moon/shared';
 import { appStyle } from '../apps.ts';
@@ -69,37 +69,6 @@ export function Provenance({ workflow, node, onClose }: { workflow: Workflow; no
           ))}
         </div>
       )}
-    </section>
-  );
-}
-
-// ---------- I7: live feed of MCP calls ----------
-
-export function ActivityFeed({ events, error, now }: { events: ActivityEvent[] | null; error: string | null; now: number }) {
-  return (
-    <section className="card feed">
-      <header className="card-head">
-        <span className="grow strong">Activité MCP</span>
-        <span className={`live-dot ${error ? 'off' : ''}`} title={error ? `Rafraîchissement en échec : ${error}` : 'Mise à jour toutes les 2 s'} />
-      </header>
-      {error && <div className="notice error">Impossible de lire l’activité : {error}</div>}
-      {events && events.length === 0 && (
-        <p className="muted small">Aucun appel MCP reçu pour ce workflow. Les appels de Claude via MCP B apparaîtront ici.</p>
-      )}
-      <ul className="feed-list">
-        {events?.map((e) => (
-          <li key={e.id} className={`feed-item ${e.status}`}>
-            <div className="feed-top">
-              <code>{e.tool}</code>
-              <span className={`badge ${e.status === 'success' ? 'badge-ok' : 'badge-error'}`}>{e.status === 'success' ? 'succès' : 'erreur'}</span>
-            </div>
-            <div className="feed-summary">{e.summary}</div>
-            <div className="muted small" title={e.timestamp}>
-              {fmtTime(e.timestamp)} · {timeAgo(e.timestamp, now)}
-            </div>
-          </li>
-        ))}
-      </ul>
     </section>
   );
 }
@@ -200,33 +169,45 @@ export function DetailsTab({ workflow, validation, onSelect }: { workflow: Workf
 
 // ---------- Logs tab ----------
 
-export function LogsTab({ events, now }: { events: ActivityEvent[] | null; now: number }) {
-  if (!events) return <div className="empty">Chargement…</div>;
-  if (events.length === 0) return <div className="empty">Aucun appel MCP enregistré pour ce workflow.</div>;
+export function LogsTab({ events, error, tools, toolsError, now }: {
+  events: ActivityEvent[] | null;
+  error: string | null;
+  tools: McpToolInfo[] | null;
+  toolsError: string | null;
+  now: number;
+}) {
   return (
     <div className="tab-scroll">
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Heure</th>
-            <th>Outil</th>
-            <th>Résumé</th>
-            <th>Statut</th>
-          </tr>
-        </thead>
-        <tbody>
-          {events.map((e) => (
-            <tr key={e.id}>
-              <td className="small" title={timeAgo(e.timestamp, now)}>{fmtDateTime(e.timestamp)}</td>
-              <td><code>{e.tool}</code></td>
-              <td>{e.summary}</td>
-              <td>
-                <span className={`badge ${e.status === 'success' ? 'badge-ok' : 'badge-error'}`}>{e.status === 'success' ? 'succès' : 'erreur'}</span>
-              </td>
+      <McpTools tools={tools} error={toolsError} />
+      {error && <div className="notice error">Impossible de lire l’activité : {error}</div>}
+      {!events && !error && <div className="empty">Chargement…</div>}
+      {events && events.length === 0 && (
+        <p className="muted small logs-empty">Aucun appel MCP reçu pour ce workflow. Les appels de Claude via MCP B apparaîtront ici en direct.</p>
+      )}
+      {events && events.length > 0 && (
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Heure</th>
+              <th>Outil</th>
+              <th>Résumé</th>
+              <th>Statut</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {events.map((e) => (
+              <tr key={e.id}>
+                <td className="small" title={timeAgo(e.timestamp, now)}>{fmtDateTime(e.timestamp)}</td>
+                <td><code>{e.tool}</code></td>
+                <td>{e.summary}</td>
+                <td>
+                  <span className={`badge ${e.status === 'success' ? 'badge-ok' : 'badge-error'}`}>{e.status === 'success' ? 'succès' : 'erreur'}</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
