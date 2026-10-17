@@ -30,8 +30,9 @@ MCP_ACCESS_KEY=... npm run start:mcp          # MCP B :8787
 claude mcp add --transport http moon http://localhost:8787/mcp -H "Authorization: Bearer $MCP_ACCESS_KEY"
 ```
 
-Déploiement : second service Railway (racine du dépôt, commande `npm run start:mcp`),
-avec les trois variables ci-dessus. Ne jamais mettre les clés dans le dépôt.
+Déploiement : second service Railway sur le même dépôt (racine du dépôt). Dans ses Settings,
+mettre le fichier de config (« Config as code ») sur `mcp/railway.json` — sinon le `railway.json`
+de la racine lui ferait lancer l'API au lieu de MCP B. Puis les trois variables ci-dessus. Ne jamais mettre les clés dans le dépôt.
 
 ## Tests
 
