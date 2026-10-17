@@ -43,7 +43,7 @@ code { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--a
 .sky {
   position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background:
-    radial-gradient(70% 45% at 50% -10%, rgba(214,178,106,0.06), transparent 70%),
+    radial-gradient(60% 40% at 55% -12%, rgba(214,178,106,0.10), transparent 70%),
     var(--bg);
 }
 .app > *:not(.sky) { position: relative; z-index: 1; }
@@ -125,10 +125,11 @@ ul.plain { margin: 0; padding-left: 18px; color: #bdbdc4; }
 .wf { display: flex; align-items: center; gap: 8px; width: 100%; padding: 6px 8px; border-radius: 8px; text-align: left; color: #c8c8ce; font-size: 13px; }
 .wf:hover { background: rgba(255,255,255,.04); }
 .wf.selected { background: rgba(214,178,106,.14); color: #fff; }
-.wf-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
-.wf-dot.ready { background: var(--green); }
-.wf-dot.analyzing { background: var(--accent-2); }
-.wf-dot.error { background: var(--red); }
+/* workflow status as moon phases: new moon = draft, half = analysing, full = ready */
+.wf-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; border: 1.5px solid var(--accent); background: transparent; }
+.wf-dot.analyzing { background: linear-gradient(90deg, transparent 50%, var(--accent) 50%); }
+.wf-dot.ready { background: var(--accent); box-shadow: 0 0 6px rgba(214,178,106,.45); }
+.wf-dot.error { border-color: var(--red); background: var(--red); }
 .sp-chip { display: inline-flex; align-items: center; gap: 7px; padding: 2px 9px; border-radius: 999px; font-size: 12px; color: var(--green); border: 1px solid rgba(52,211,153,.4); background: rgba(52,211,153,.1); }
 .sp-chip .status-dot { width: 7px; height: 7px; }
 .status-dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
@@ -147,7 +148,12 @@ ul.plain { margin: 0; padding-left: 18px; color: #bdbdc4; }
 .tabs button.active { color: #fff; border-bottom-color: var(--accent); }
 .tabs button:disabled { opacity: .4; cursor: not-allowed; }
 .count { font-size: 11px; padding: 0 6px; border-radius: 999px; background: rgba(214,178,106,.2); color: #f0d9a8; }
-.canvas { flex: 1; min-height: 0; margin: 16px 28px 24px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-2); overflow: hidden; position: relative; }
+.canvas { flex: 1; min-height: 0; margin: 16px 28px 24px; border-radius: 12px; border: 1px solid var(--border); background: url('/stars.svg') center / cover no-repeat, var(--bg-2); overflow: hidden; position: relative; }
+/* faint golden crescent watermark, behind the graph */
+.canvas::before {
+  content: ''; position: absolute; right: -40px; bottom: -40px; width: 280px; height: 280px;
+  background: url('/crescent.svg') center / contain no-repeat; opacity: .07; pointer-events: none;
+}
 .tab-scroll { height: 100%; overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
 
 .table { width: 100%; border-collapse: collapse; font-size: 13px; }
