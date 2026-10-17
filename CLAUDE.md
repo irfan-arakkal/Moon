@@ -67,6 +67,9 @@ MCP B = action sur le workflow.
 
 Pas de chat dans l'interface : la valeur de notre produit est dans les outils
 MCP B, le graphe, le fil d'activité et la provenance. Un chat intégré est P2.
+*Mise à jour (Irfan) : un panneau « Claude » réel a été ajouté à droite (`web/server/assistant.ts`,
+Sonnet 5.5, mêmes outils que MCP B, pas d'accès à Screenpipe). Désactivé, avec la raison affichée, sans
+`ANTHROPIC_API_KEY` ; code d'accès obligatoire en production. Jamais de conversation simulée.*
 
 ## 4. Stack et déploiement
 

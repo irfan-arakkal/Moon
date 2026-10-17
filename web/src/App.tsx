@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api, fmtDateTime, timeAgo, useNow, usePolling } from './api.ts';
 import { GraphView } from './components/GraphView.tsx';
 import { SourceBadge, StatusBadge } from './components/Badges.tsx';
+import { ChatInput, ChatThread, useAssistant } from './components/Assistant.tsx';
 import { ClaudePanel } from './components/ClaudePanel.tsx';
 import { DetailsTab, LogsTab } from './components/Panels.tsx';
 import { ScreenpipeStatus, Sidebar } from './components/Sidebar.tsx';
@@ -46,6 +47,7 @@ export function App() {
   const validation = usePolling(workflowId ? () => api.validate(workflowId) : null, 5000, [workflowId]);
 
   const wf = workflow.data;
+  const assistant = useAssistant(workflowId ?? '');
   const client = clients.data?.find((c) => c.id === wf?.clientId);
   const node = useMemo(() => wf?.nodes.find((n) => n.id === selectedNode) ?? null, [wf, selectedNode]);
 
@@ -115,7 +117,10 @@ export function App() {
           eventsError={activity.error}
           now={now}
           onCollapse={() => setPanelOpen(false)}
-        />
+          thread={<ChatThread messages={assistant.messages} busy={assistant.busy} />}
+        >
+          <ChatInput workflowName={wf.name} a={assistant} />
+        </ClaudePanel>
       )}
     </div>
   );

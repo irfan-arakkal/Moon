@@ -207,6 +207,27 @@ ul.plain { margin: 0; padding-left: 18px; color: #bdbdc4; }
 .obs-text { font-size: 12.5px; color: #d9d9de; word-break: break-word; }
 .links { margin-top: 10px; display: flex; flex-direction: column; gap: 2px; }
 
+.chat { display: flex; flex-direction: column; gap: 12px; }
+.chat-user { align-self: stretch; padding: 9px 12px; border-radius: 8px; background: var(--card); border: 1px solid var(--border-strong); color: var(--text); white-space: pre-wrap; }
+.chat-assistant { font-size: 12.5px; color: #d4d4d8; }
+.chat-assistant p { margin: 0 0 8px; white-space: pre-wrap; }
+.chat-assistant.is-error p { color: #fbb4b4; }
+.chat-steps { list-style: none; margin: 0 0 8px; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.chat-steps li { display: flex; align-items: center; gap: 7px; font-size: 11.5px; }
+.chat-steps .log-dot { margin-top: 0; }
+.log-dot.success { background: var(--green); }
+.chat-busy { animation: pulse 1.4s ease-in-out infinite; }
+.composer { flex: none; padding: 10px 12px 12px; border-top: 1px solid var(--border); }
+.composer-note { margin: 0 2px 8px; }
+.composer-box { border: 1px solid var(--border-strong); border-radius: 10px; background: var(--card); padding: 8px 8px 6px 10px; }
+.composer-box:focus-within { border-color: #4a4a50; }
+.composer textarea, .composer-code { width: 100%; resize: none; background: none; border: 0; outline: none; color: var(--text); font: inherit; }
+.composer textarea:disabled { cursor: not-allowed; }
+.composer-bar { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.ctx-chip { font-size: 11px; padding: 2px 7px; border-radius: 6px; border: 1px solid var(--border-strong); color: #c9c9cf; max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.send { width: 26px; height: 26px; border-radius: 7px; background: var(--accent); color: #fff; font-weight: 700; display: grid; place-items: center; }
+.send:disabled { background: #2c2c31; color: var(--muted); cursor: not-allowed; }
+
 @media (max-width: 1200px) {
   .app.with-panel { grid-template-columns: 220px minmax(0, 1fr) 320px; }
 }

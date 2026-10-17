@@ -1,5 +1,5 @@
-// Right panel "Claude": provenance of the selected step + the real MCP calls Claude made on
-// this workflow (activity feed). Nothing here is simulated: every line comes from the API.
+// Right panel "Claude": conversation with the in-app assistant, provenance of the selected step,
+// and the real MCP calls made on this workflow. Nothing here is simulated: every line comes from the API.
 
 import type { ActivityEvent, Workflow, WorkflowNode } from '@moon/shared';
 import { fmtTime, timeAgo } from '../api.ts';
@@ -13,10 +13,11 @@ interface Props {
   eventsError: string | null;
   now: number;
   onCollapse: () => void;
-  children?: React.ReactNode; // composer, when available
+  thread?: React.ReactNode; // conversation with the in-app assistant
+  children?: React.ReactNode; // composer
 }
 
-export function ClaudePanel({ workflow, node, onCloseNode, events, eventsError, now, onCollapse, children }: Props) {
+export function ClaudePanel({ workflow, node, onCloseNode, events, eventsError, now, onCollapse, thread, children }: Props) {
   const sorted = [...(events ?? [])].sort((a, b) => Date.parse(b.timestamp) - Date.parse(a.timestamp));
   return (
     <aside className="claude">
@@ -30,6 +31,7 @@ export function ClaudePanel({ workflow, node, onCloseNode, events, eventsError, 
       </header>
 
       <div className="claude-body">
+        {thread}
         {node ? (
           <Provenance workflow={workflow} node={node} onClose={onCloseNode} />
         ) : (

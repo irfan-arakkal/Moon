@@ -1,4 +1,4 @@
-// Read-only client for the REST API + polling hook (I6).
+// Client for the REST API (read-only) + polling hook (I6), and the in-app assistant.
 
 import { useEffect, useRef, useState } from 'react';
 import type { ActivityEvent, ClientSummary, McpToolInfo, ValidationResult, Workflow } from '@moon/shared';
@@ -15,7 +15,35 @@ export const api = {
   activity: (id: string) => get<ActivityEvent[]>(`/workflows/${encodeURIComponent(id)}/activity`),
   validate: (id: string) => get<ValidationResult>(`/workflows/${encodeURIComponent(id)}/validate`),
   mcpTools: () => get<McpToolInfo[]>('/mcp/tools'),
+  assistantStatus: () => get<AssistantStatus>('/assistant/status'),
 };
+
+export interface AssistantStatus {
+  enabled: boolean;
+  reason: string | null;
+  needsCode: boolean;
+  model: string;
+}
+export interface AssistantStep {
+  tool: string;
+  ok: boolean;
+  summary: string;
+}
+export interface ChatTurn {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
+export async function askAssistant(workflowId: string, messages: ChatTurn[], code: string | null): Promise<{ reply: string; steps: AssistantStep[] }> {
+  const res = await fetch('/api/assistant', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', ...(code ? { 'x-assistant-code': code } : {}) },
+    body: JSON.stringify({ workflowId, messages }),
+  });
+  const body = (await res.json().catch(() => ({}))) as { reply?: string; steps?: AssistantStep[]; error?: string };
+  if (!res.ok) throw Object.assign(new Error(body.error ?? `HTTP ${res.status}`), { status: res.status, steps: body.steps ?? [] });
+  return { reply: body.reply ?? '', steps: body.steps ?? [] };
+}
 
 export interface Polled<T> {
   data: T | null;

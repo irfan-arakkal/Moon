@@ -7,6 +7,7 @@ import { dirname, join } from 'node:path';
 import { openDb } from './db.ts';
 import { createApi } from './app.ts';
 import { seedTestData } from './seed.ts';
+import { assistantRouter } from './assistant.ts';
 
 const isProd = process.env.NODE_ENV === 'production';
 const port = Number(process.env.PORT ?? 3000);
@@ -25,6 +26,8 @@ if (store.isEmpty() && process.env.SEED_TEST_DATA !== 'false') {
 }
 
 const app = express();
+// Mounted before the REST API: the in-app Claude panel (calls the REST API below with the same key).
+app.use('/api/assistant', assistantRouter({ apiBase: `http://127.0.0.1:${port}/api`, apiKey, isProd }));
 app.use('/api', createApi({ store, apiKey }));
 
 const dist = join(dirname(fileURLToPath(import.meta.url)), '..', 'dist');
