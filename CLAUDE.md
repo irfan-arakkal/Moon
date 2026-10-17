@@ -79,8 +79,12 @@ MCP B, le graphe, le fil d'activité et la provenance. Un chat intégré est P2.
   le front, le dépôt, les prompts ni les logs. MCP B exige une clé d'accès.
 - Ne pas ajouter de dépendance ni faire de refactor massif sans nécessité.
 
-> Section à compléter dès que le dépôt existe : commandes de lancement
-> (front, backend, Screenpipe), commande de test, variables d'environnement.
+Commandes (détails et contrat REST pour MCP B : `web/README.md`) :
+- `npm install` à la racine, puis `npm run dev` (API :3000 + interface :5173).
+- `npm test` (tests API), `npm run typecheck`.
+- Production / Railway : `npm run build` puis `npm start` (voir `railway.json`).
+- Variables : `API_KEY` (obligatoire en prod), `DATABASE_PATH`, `SEED_TEST_DATA`, `PORT` — voir `.env.example`.
+- Base : SQLite intégré à Node (`node:sqlite`, Node ≥ 22.13). Postgres plus tard si nécessaire.
 
 ## 5. MCP A — Screenpipe (lecture)
 
@@ -312,16 +316,17 @@ fois par le front et par le serveur MCP B :
 - [ ] I2. Rédiger `shared/types.ts` d’après §8 et le faire valider par Hugo. *(rédigé — en attente de validation par Hugo)*
 - [x] I3. Base de données (SQLite d'abord, Postgres ensuite) et API REST du contrat.
 - [ ] I4. Déployer le service sur Railway (variables d'environnement, jamais de clé
-      dans le dépôt) et donner l'URL à Hugo.
-- [ ] I5. Front : React Flow qui affiche un workflow lu depuis l'API (données de
+      dans le dépôt) et donner l'URL à Hugo. *(config prête : `railway.json` + étapes dans
+      `web/README.md` ; le déploiement lui-même reste à faire depuis le compte Railway)*
+- [x] I5. Front : React Flow qui affiche un workflow lu depuis l'API (données de
       test étiquetées tant que MCP B n'écrit pas encore en base).
-- [ ] I6. Rafraîchissement du graphe (polling ou SSE) quand le workflow change.
-- [ ] I7. Panneau droit : fil d'activité des appels MCP, avec statut.
-- [ ] I8. Panneau de provenance au clic sur un node : observations, application,
+- [x] I6. Rafraîchissement du graphe (polling ou SSE) quand le workflow change.
+- [x] I7. Panneau droit : fil d'activité des appels MCP, avec statut.
+- [x] I8. Panneau de provenance au clic sur un node : observations, application,
       heure, badge observé / inféré.
-- [ ] I9. Badges de statut honnêtes : source des données, mode (live, session
+- [x] I9. Badges de statut honnêtes : source des données, mode (live, session
       enregistrée, manuel), analyse en cours / résultat / erreur.
-- [ ] I10. Sidebar (logo lune, clients, workflows) et thème lune/cosmos (polish,
+- [x] I10. Sidebar (logo lune, clients, workflows) et thème lune/cosmos (polish,
       en dernier).
 
 ### Tâches de Hugo (Screenpipe, MCP, analyse, démo)
