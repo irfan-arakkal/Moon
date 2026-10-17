@@ -9,6 +9,10 @@ import { createApi } from './app.ts';
 import { seedTestData } from './seed.ts';
 import { assistantRouter } from './assistant.ts';
 
+// Local dev: read the repository's .env if present (Railway sets real variables; existing ones win).
+const envFile = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '.env');
+if (existsSync(envFile)) process.loadEnvFile(envFile);
+
 const isProd = process.env.NODE_ENV === 'production';
 const port = Number(process.env.PORT ?? 3000);
 const apiKey = process.env.API_KEY || undefined;
