@@ -83,7 +83,6 @@ export function App() {
               <button className={tab === 'logs' ? 'active' : ''} onClick={() => setTab('logs')}>
                 Logs {activity.data && activity.data.length > 0 && <span className="count">{activity.data.length}</span>}
               </button>
-              <button disabled title="Pas encore disponible">Historique</button>
             </nav>
 
             <section className="canvas">

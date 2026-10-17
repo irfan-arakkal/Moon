@@ -32,6 +32,7 @@ export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow }
 
       <input className="search" placeholder="Rechercher un client…" value={query} onChange={(e) => setQuery(e.target.value)} />
 
+      <div className="section-label">Clients</div>
       <nav className="clients">
         {error && <div className="notice error">API injoignable : {error}</div>}
         {clients && clients.length === 0 && <p className="muted small">Aucun client. Claude en créera un via MCP B.</p>}

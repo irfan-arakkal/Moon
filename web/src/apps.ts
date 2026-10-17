@@ -24,5 +24,5 @@ const KNOWN: [RegExp, AppStyle][] = [
 export function appStyle(app: string | null): AppStyle {
   if (!app) return { label: '—', mark: '•', color: '#8e8e96' };
   for (const [re, style] of KNOWN) if (re.test(app)) return { ...style, label: app };
-  return { label: app, mark: app.trim().charAt(0).toUpperCase() || '•', color: '#b7bdc9' };
+  return { label: app, mark: app.trim().charAt(0).toUpperCase() || '•', color: '#d6b26a' };
 }
