@@ -26,7 +26,7 @@ claude mcp list        # screenpipe (MCP A) et moon (MCP B) doivent apparaître
 Lancer Claude Code **à la racine du dépôt** pour avoir les commandes `/analyse` et
 `/analyse-enregistree` (`.claude/commands/`).
 
-## 3. Enregistrer le scénario (H2)
+## 3. Enregistrer le scénario (H2) — documents prêts dans `docs/scenario/`
 
 Screenpipe tourne depuis quelques minutes (sinon peu de temps actif capturé).
 Noter l'heure de début et de fin. Données **fictives**, jouées lentement, 3 à 5 min :
