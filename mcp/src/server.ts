@@ -5,6 +5,8 @@ import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { McpServer, WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/server';
 import { timingSafeEqual } from 'node:crypto';
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { MoonApi } from './api.ts';
 import { buildTools } from './tools.ts';
 
@@ -43,6 +45,9 @@ export function createMcpApp(opts: { accessKey: string; api: MoonApi }) {
 }
 
 if (process.argv[1] && import.meta.url === new URL(process.argv[1], 'file:').href) {
+  // Local dev: read the repository's .env if present (Railway sets real variables; existing ones win).
+  const envFile = fileURLToPath(new URL('../../.env', import.meta.url));
+  if (existsSync(envFile)) process.loadEnvFile(envFile);
   const accessKey = process.env.MCP_ACCESS_KEY;
   if (!accessKey) {
     console.error('MCP_ACCESS_KEY manquante : refus de démarrer (jamais de clé dans le code).');

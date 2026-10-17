@@ -4,7 +4,7 @@
 
 ```bash
 npm install          # à la racine du dépôt
-cp .env.example .env # facultatif
+cp .env.example .env # facultatif : lu automatiquement par l’API et MCP B en local
 npm run dev          # API sur :3000 + interface sur http://localhost:5173
 npm test             # tests de l'API
 npm run typecheck
