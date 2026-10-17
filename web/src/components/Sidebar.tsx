@@ -35,7 +35,6 @@ export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow }
   return (
     <aside className="sidebar">
       <div className="brand">
-        <div className="logo-tile" aria-hidden><div className="moon" /></div>
         <span className="brand-name">Moon</span>
       </div>
 
