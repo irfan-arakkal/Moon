@@ -9,10 +9,9 @@ interface Props {
   error: string | null;
   selectedWorkflowId: string | null;
   onSelectWorkflow: (id: string) => void;
-  now: number;
 }
 
-export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow, now }: Props) {
+export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow }: Props) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState<Record<string, boolean>>({});
   const q = query.trim().toLowerCase();
@@ -70,7 +69,6 @@ export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow, 
         })}
       </nav>
 
-      <ScreenpipeStatus client={activeClient ?? null} now={now} />
     </aside>
   );
 }
@@ -80,7 +78,8 @@ export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow, 
 //  1. this browser calls http://localhost:3030/health (works when the page is opened on the
 //     machine running Screenpipe and the browser allows it);
 //  2. otherwise, the last status reported to the API for the client (POST /api/clients/:id/screenpipe-status).
-// Neither → "non connecté". Never a hard-coded "connecté".
+// Shown in the header only when one of them confirms the connection; otherwise nothing.
+// Never a hard-coded "connecté".
 
 type LocalCheck = { ok: boolean; lastFrame: string | null } | null;
 
@@ -111,7 +110,7 @@ function useLocalScreenpipe(): LocalCheck {
 
 const REPORT_FRESH_MS = 10 * 60 * 1000;
 
-function ScreenpipeStatus({ client, now }: { client: ClientSummary | null; now: number }) {
+export function ScreenpipeStatus({ client, now }: { client: ClientSummary | null; now: number }) {
   const local = useLocalScreenpipe();
   let connected = false;
   let detail = 'non connecté';
@@ -130,13 +129,11 @@ function ScreenpipeStatus({ client, now }: { client: ClientSummary | null; now: 
     detail = 'vérification…';
   }
 
+  if (!connected) return null;
   return (
-    <div className="sp-status" title={source}>
-      <span className={`status-dot ${connected ? 'on' : 'off'}`} />
-      <div>
-        <div className="small strong">{connected ? 'Screenpipe connecté' : 'Screenpipe non connecté'}</div>
-        <div className="muted tiny">{connected ? detail : detail === 'vérification…' ? detail : source}</div>
-      </div>
-    </div>
+    <span className="sp-chip" title={`${source} · ${detail}`}>
+      <span className="status-dot on" />
+      Screenpipe connecté
+    </span>
   );
 }
