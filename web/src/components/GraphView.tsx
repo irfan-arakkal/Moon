@@ -20,7 +20,7 @@ import { appStyle } from '../apps.ts';
 import { layout } from '../layout.ts';
 
 // Arrow colours match the edge strokes in styles.css (plain / true / false).
-const EDGE_COLOR = { plain: '#5c6475', true: '#34d399', false: '#f87171' } as const;
+const EDGE_COLOR = { plain: '#5e5e66', true: '#34d399', false: '#f87171' } as const;
 
 type StepData = { node: WorkflowNode; selected: boolean };
 type StepNode = Node<StepData, 'step'>;
@@ -129,7 +129,7 @@ function Graph({ workflow, selectedId, onSelect }: Props) {
     >
       <Background gap={20} size={1} color="rgba(255,255,255,0.09)" />
       <Controls position="top-left" showInteractive={false} />
-      <MiniMap position="bottom-left" pannable zoomable bgColor="#11141b" nodeColor="#7468f0" nodeBorderRadius={4} maskColor="rgba(11,13,18,0.6)" />
+      <MiniMap position="bottom-left" pannable zoomable bgColor="#131316" nodeColor="#8e8e96" nodeBorderRadius={4} maskColor="rgba(12,12,14,0.6)" />
     </ReactFlow>
   );
 }
