@@ -1,6 +1,6 @@
 // I10: sidebar — clients and workflows (counts from the database), Screenpipe status.
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ClientSummary } from '@moon/shared';
 import { timeAgo } from '../api.ts';
 
@@ -14,6 +14,18 @@ interface Props {
 export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow }: Props) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState<Record<string, boolean>>({});
+  const searchRef = useRef<HTMLInputElement>(null);
+  // Ctrl/⌘ + K focuses the client search.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        searchRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
   const q = query.trim().toLowerCase();
   const visible = (clients ?? []).filter(
     (c) => !q || c.name.toLowerCase().includes(q) || c.workflows.some((w) => w.name.toLowerCase().includes(q)),
@@ -24,13 +36,14 @@ export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow }
     <aside className="sidebar">
       <div className="brand">
         <div className="logo-tile" aria-hidden><div className="moon" /></div>
-        <div>
-          <div className="brand-name">Moon</div>
-          <div className="muted tiny">Trouver quoi automatiser</div>
-        </div>
+        <span className="brand-name">Moon</span>
       </div>
 
-      <input className="search" placeholder="Rechercher un client…" value={query} onChange={(e) => setQuery(e.target.value)} />
+      <label className="search">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+        <input ref={searchRef} placeholder="Rechercher" value={query} onChange={(e) => setQuery(e.target.value)} />
+        <kbd>⌘K</kbd>
+      </label>
 
       <div className="section-label">Clients</div>
       <nav className="clients">
@@ -42,15 +55,8 @@ export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow }
             <div key={c.id} className={`client ${c.id === activeClient?.id ? 'active' : ''}`}>
               <button className="client-head" onClick={() => setOpen({ ...open, [c.id]: !isOpen })}>
                 <span className="client-avatar">{c.name.charAt(0).toUpperCase()}</span>
-                <span className="grow">
-                  <span className="client-name">
-                    {c.name} {c.isExample && <span className="badge badge-test tiny">exemple</span>}
-                  </span>
-                  <span className="muted tiny">
-                    {c.workflows.length} workflow{c.workflows.length > 1 ? 's' : ''}
-                  </span>
-                </span>
-                <span className={`chev ${isOpen ? 'open' : ''}`}>›</span>
+                <span className="grow client-name" title={`${c.workflows.length} workflow${c.workflows.length > 1 ? 's' : ''}`}>{c.name}</span>
+                {c.isExample && <span className="tag">exemple</span>}
               </button>
               {isOpen && (
                 <ul className="wf-list">
@@ -58,8 +64,10 @@ export function Sidebar({ clients, error, selectedWorkflowId, onSelectWorkflow }
                     <li key={w.id}>
                       <button className={`wf ${w.id === selectedWorkflowId ? 'selected' : ''}`} onClick={() => onSelectWorkflow(w.id)}>
                         <span className={`wf-dot ${w.status}`} />
-                        <span className="grow">{w.name}</span>
-                        {w.isTestData && <span className="badge badge-test tiny">test</span>}
+                        <span className="grow">
+                          <span className="wf-name">{w.name}</span>
+                          {w.isTestData && <span className="wf-sub">données de test</span>}
+                        </span>
                       </button>
                     </li>
                   ))}

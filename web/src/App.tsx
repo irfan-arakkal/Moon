@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { api, fmtDateTime, timeAgo, useNow, usePolling } from './api.ts';
 import { GraphView } from './components/GraphView.tsx';
 import { SourceBadge, StatusBadge } from './components/Badges.tsx';
-import { DetailsTab, LogsTab, Provenance } from './components/Panels.tsx';
+import { ClaudePanel } from './components/ClaudePanel.tsx';
+import { DetailsTab, LogsTab } from './components/Panels.tsx';
 import { ScreenpipeStatus, Sidebar } from './components/Sidebar.tsx';
 
 const POLL_MS = 2000;
@@ -15,6 +16,7 @@ export function App() {
   const [workflowId, setWorkflowId] = useState<string | null>(readHash);
   const [tab, setTab] = useState<Tab>('graph');
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [panelOpen, setPanelOpen] = useState(true);
 
   useEffect(() => {
     const onHash = () => setWorkflowId(readHash());
@@ -48,7 +50,7 @@ export function App() {
   const node = useMemo(() => wf?.nodes.find((n) => n.id === selectedNode) ?? null, [wf, selectedNode]);
 
   return (
-    <div className="app">
+    <div className={`app ${wf && panelOpen ? 'with-panel' : ''}`}>
       <div className="sky" aria-hidden />
       <Sidebar clients={clients.data} error={clients.error} selectedWorkflowId={workflowId} onSelectWorkflow={selectWorkflow} />
 
@@ -57,28 +59,30 @@ export function App() {
         {workflowId && workflow.error && !wf && <div className="empty">Impossible de charger le workflow : {workflow.error}</div>}
         {wf && (
           <>
-            <header className="header">
-              <div className="grow">
-                <div className="crumbs">
-                  <span className="crumb-client">{client?.name ?? '…'}</span>
-                  <span className="crumb-sep">›</span>
-                  <span className="crumb-wf">{wf.name}</span>
-                </div>
-                <div className="row gap wrap">
-                  <SourceBadge workflow={wf} />
-                  <StatusBadge status={wf.status} />
-                  <ScreenpipeStatus client={client ?? null} now={now} />
-                  {workflow.error && <span className="badge badge-error">Rafraîchissement en échec</span>}
-                </div>
+            <header className="topbar">
+              <div className="crumbs">
+                <span className="crumb-client">{client?.name ?? '…'}</span>
+                <span className="crumb-sep">›</span>
+                <span className="crumb-wf">{wf.name}</span>
               </div>
-              <div className="updated" title={fmtDateTime(wf.updatedAt)}>
+              <span className="grow" />
+              <SourceBadge workflow={wf} />
+              <StatusBadge status={wf.status} />
+              <ScreenpipeStatus client={client ?? null} now={now} />
+              {workflow.error && <span className="badge badge-error">Rafraîchissement en échec</span>}
+              <span className="updated" title={`Dernière mise à jour : ${fmtDateTime(wf.updatedAt)}`}>
                 <span className={`live-dot ${workflow.error ? 'off' : ''}`} />
-                Dernière mise à jour : {timeAgo(wf.updatedAt, now)}
-              </div>
+                {timeAgo(wf.updatedAt, now)}
+              </span>
+              {!panelOpen && (
+                <button className="icon-btn" onClick={() => setPanelOpen(true)} title="Afficher le panneau Claude">
+                  « Claude
+                </button>
+              )}
             </header>
 
             <nav className="tabs">
-              <button className={tab === 'graph' ? 'active' : ''} onClick={() => setTab('graph')}>Vue Graph</button>
+              <button className={tab === 'graph' ? 'active' : ''} onClick={() => setTab('graph')}>Graph</button>
               <button className={tab === 'details' ? 'active' : ''} onClick={() => setTab('details')}>Détails</button>
               <button className={tab === 'logs' ? 'active' : ''} onClick={() => setTab('logs')}>
                 Logs {activity.data && activity.data.length > 0 && <span className="count">{activity.data.length}</span>}
@@ -86,19 +90,33 @@ export function App() {
             </nav>
 
             <section className="canvas">
-              {tab === 'graph' && <GraphView workflow={wf} selectedId={selectedNode} onSelect={setSelectedNode} />}
+              {tab === 'graph' && (
+                <>
+                  <GraphView workflow={wf} selectedId={selectedNode} onSelect={setSelectedNode} />
+                  <div className="legend">
+                    <span><i className="lg-observed" /> Observé</span>
+                    <span><i className="lg-inferred" /> Déduit</span>
+                  </div>
+                </>
+              )}
               {tab === 'details' && <DetailsTab workflow={wf} validation={validation.data} onSelect={(id) => { setSelectedNode(id); }} />}
               {tab === 'logs' && <LogsTab events={activity.data} error={activity.error} tools={tools.data} toolsError={tools.error} now={now} />}
-              {node && tab !== 'logs' && (
-                <div className="node-overlay">
-                  <Provenance workflow={wf} node={node} onClose={() => setSelectedNode(null)} />
-                </div>
-              )}
             </section>
           </>
         )}
       </main>
 
+      {wf && panelOpen && (
+        <ClaudePanel
+          workflow={wf}
+          node={node}
+          onCloseNode={() => setSelectedNode(null)}
+          events={activity.data}
+          eventsError={activity.error}
+          now={now}
+          onCollapse={() => setPanelOpen(false)}
+        />
+      )}
     </div>
   );
 }

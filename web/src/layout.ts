@@ -3,8 +3,8 @@
 
 import type { WorkflowEdge, WorkflowNode } from '@moon/shared';
 
-const COL = 250;
-const ROW = 110;
+const COL = 190;
+const ROW = 150;
 
 export function layout(nodes: WorkflowNode[], edges: WorkflowEdge[]): Map<string, { x: number; y: number }> {
   const ids = new Set(nodes.map((n) => n.id));
